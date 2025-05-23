@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protect my channel</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+  <h1>Protect my channel</h1>
+  <p>Welcome to the auto-reply bot for your channel!</p>
+  <button onclick="login()">Login with Pi</button>
+
+  <div id="response" style="margin-top: 20px;"></div>
+
+  <script>
+    async function login() {
+      Pi.init({ version: "2.0" });
+
+      try {
+        const scopes = ['username', 'payments'];
+        const result = await Pi.authenticate(scopes);
+        document.getElementById("response").innerText = 
+          "Welcome " + result.user.username + "!";
+
+        // Example auto-message check
+        const msg = prompt("Write a message to check for spam:");
+        const res = await fetch("https://protect-my-channel.onrender.com/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg }),
+        });
+        const data = await res.json();
+        alert("Reply: " + data.reply);
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  </script>
+
+  <footer style="margin-top: 50px;">Powered by Protect my channel</footer>
+</body>
+</html>
